@@ -24,6 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
 sig_sim <- 0 
 sim <- 10000
 samples_per_cohort <- 10000
+set.seed(888)
 for (i in 1:sim){
   pre <- rpois(samples_per_cohort, 10)
   post <- pre + rnorm(samples_per_cohort, mean=0, sd=1)
@@ -44,6 +45,7 @@ print(paste0("Type one error is: ", sig_sim / sim))
 
 # Correct for covariance of pre-post data points of each sample (Correct way)
 sig_sim <- 0 
+set.seed(888)
 for (i in 1:sim){
   pre <- rpois(samples_per_cohort, 10)
   post <- pre + rnorm(samples_per_cohort, mean=0, sd=1)
@@ -64,6 +66,7 @@ print(paste0("Type one error is: ", sig_sim / sim))
 
 # Linear regression (Linear regression assumes each samples are independent to each other, so I think the result should be similar to the one without correcting for the pre-post covariance)  (Wrong way)
 sig_sim <- 0 
+set.seed(888)
 for (i in 1:sim){
   pre <- rpois(samples_per_cohort, 10)
   post <- pre + rnorm(samples_per_cohort, mean=0, sd=1)
@@ -78,6 +81,8 @@ for (i in 1:sim){
 }
 print(paste0("Type one error is: ", sig_sim / sim))
 
+# Take diff first, and then check for the differences distribution 
+
 ```
 
 
@@ -89,9 +94,10 @@ print(paste0("Type one error is: ", sig_sim / sim))
 sig_sim <- 0 
 sim <- 10000
 samples_per_cohort <- 10000
+set.seed(888)
 for (i in 1:sim){
   pre <- rpois(samples_per_cohort, 10)
-  post <- pre + rnorm(samples_per_cohort, mean=0.01, sd=1)
+  post <- pre + rnorm(samples_per_cohort, mean=0.05, sd=1)
   pre_post_mean <- mean(post) - mean(pre)
   pre_sample_var <-  var(pre) * length(pre) / (length(pre) - 1)
   post_sample_var <-  var(post) * length(post) / (length(post) - 1)
@@ -109,9 +115,10 @@ print(paste0("Power is: ", sig_sim / sim))
 
 # Correct for covariance of pre-post data points of each sample (Correct way)
 sig_sim <- 0 
+set.seed(888)
 for (i in 1:sim){
   pre <- rpois(samples_per_cohort, 10)
-  post <- pre + rnorm(samples_per_cohort, mean=0.01, sd=1)
+  post <- pre + rnorm(samples_per_cohort, mean=0.05, sd=1)
   pre_post_mean <- mean(post) - mean(pre)
   pre_sample_var <-  var(pre) * length(pre) / (length(pre) - 1)
   post_sample_var <-  var(post) * length(post) / (length(post) - 1)
@@ -129,9 +136,10 @@ print(paste0("Power is: ", sig_sim / sim))
 
 # Linear regression (Linear regression assumes each samples are independent to each other, so I think the result should be similar to the one without correcting for the pre-post covariance) (Wrong way)
 sig_sim <- 0  
+set.seed(888)
 for (i in 1:sim){
   pre <- rpois(samples_per_cohort, 10)
-  post <- pre + rnorm(samples_per_cohort, mean=0.01, sd=1)
+  post <- pre + rnorm(samples_per_cohort, mean=0.05, sd=1)
   # our treatment covariates
   cohorts <- c(rep(0, samples_per_cohort), rep(1, samples_per_cohort))
   Y <- c(pre, post)
@@ -142,6 +150,9 @@ for (i in 1:sim){
   }
 }
 print(paste0("Power is: ", sig_sim / sim))
+
+# Take diff first, and then check for the differences distribution 
+
 
 ```
 
