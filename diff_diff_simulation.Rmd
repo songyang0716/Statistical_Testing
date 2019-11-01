@@ -1,0 +1,40 @@
+---
+title: "A simulation on the diff-diff method"
+author: "yangsong"
+date: "10/31/2019"
+output:
+  html_document:
+    code_folding: hide
+    toc: true
+    theme: united
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# One Group Test
+```{r, message=FALSE, warning=FALSE}
+# one cohorts, two period (pre-post), no effects
+# We need to correct for covariance of pre-post a each sample
+sig_sim <- 0 
+for (i in 1:10000){
+  pre <- rpois(10000, 10)
+  post <- pre + rnorm(10000, mean=0, sd=1)
+  pre_post_mean <- mean(post) - mean(pre)
+  pre_sample_var <-  var(pre) * length(pre) / (length(pre) - 1)
+  post_sample_var <-  var(post) * length(post) / (length(post) - 1)
+
+  # pre post samples are no longer independent to each other, need to account for the covariance term
+  pre_post_se <- sqrt(pre_sample_var / length(pre) + post_sample_var / length(post) - 2 * pre_sample_var / length(pre))
+  
+  z_score <- pre_post_mean / pre_post_se
+  if((z_score >= 1.96) | (z_score <= -1.96)){
+    sig_sim <-  sig_sim + 1
+  }
+}
+print(sig_sim)
+
+```
+
