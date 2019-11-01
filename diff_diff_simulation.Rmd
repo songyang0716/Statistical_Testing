@@ -1,5 +1,5 @@
 ---
-title: "A simulation on the diff-diff method"
+title: "A simulation on the diff-in-diff method"
 author: "yangsong"
 date: "10/31/2019"
 output:
@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Type one error / False Positive Test
 ```{r, message=FALSE, warning=FALSE}
 # No effects in post period.  We assume there are two cohorts - pre and post and we want to check the significance of mean differences between two cohorts
-# Without correcting for covariance of pre-post data points of each sample
+# Without correcting for covariance of pre-post data points of each sample (Wrong way)
 sig_sim <- 0 
 sim <- 10000
 samples_per_cohort <- 10000
@@ -42,8 +42,7 @@ for (i in 1:sim){
 print(paste0("Type one error is: ", sig_sim / sim))
 
 
-# No effects in post period
-# Correct for covariance of pre-post data points of each sample
+# Correct for covariance of pre-post data points of each sample (Correct way)
 sig_sim <- 0 
 for (i in 1:sim){
   pre <- rpois(samples_per_cohort, 10)
@@ -63,7 +62,7 @@ for (i in 1:sim){
 print(paste0("Type one error is: ", sig_sim / sim))
 
 
-# Linear regression (Linear regression assumes each samples are independent to each other, so I think the result should be similar to the one without correcting for the pre-post covariance)
+# Linear regression (Linear regression assumes each samples are independent to each other, so I think the result should be similar to the one without correcting for the pre-post covariance)  (Wrong way)
 sig_sim <- 0 
 for (i in 1:sim){
   pre <- rpois(samples_per_cohort, 10)
@@ -76,8 +75,75 @@ for (i in 1:sim){
   if (summary(linear_model)$coefficients[2,4] <= 0.05){
     sig_sim <-  sig_sim + 1
   }
-  print(paste0("Type one error is: ", sig_sim / sim))
 }
+print(paste0("Type one error is: ", sig_sim / sim))
+
 ```
 
+
+
 ## Power Test
+```{r, message=FALSE, warning=FALSE}
+# The value increases by 1 in the post period.  We assume there are two cohorts - pre and post and we want to check the significance of mean differences between two cohorts
+# Without correcting for covariance of pre-post data points of each sample (Wrong way)
+sig_sim <- 0 
+sim <- 10000
+samples_per_cohort <- 10000
+for (i in 1:sim){
+  pre <- rpois(samples_per_cohort, 10)
+  post <- pre + rnorm(samples_per_cohort, mean=0.01, sd=1)
+  pre_post_mean <- mean(post) - mean(pre)
+  pre_sample_var <-  var(pre) * length(pre) / (length(pre) - 1)
+  post_sample_var <-  var(post) * length(post) / (length(post) - 1)
+
+  # pre post samples are no longer independent to each other, need to account for the covariance term
+  pre_post_se <- sqrt(pre_sample_var / length(pre) + post_sample_var / length(post))
+  
+  z_score <- pre_post_mean / pre_post_se
+  if((z_score >= 1.96) | (z_score <= -1.96)){
+    sig_sim <-  sig_sim + 1
+  }
+}
+print(paste0("Power is: ", sig_sim / sim))
+
+
+# Correct for covariance of pre-post data points of each sample (Correct way)
+sig_sim <- 0 
+for (i in 1:sim){
+  pre <- rpois(samples_per_cohort, 10)
+  post <- pre + rnorm(samples_per_cohort, mean=0.01, sd=1)
+  pre_post_mean <- mean(post) - mean(pre)
+  pre_sample_var <-  var(pre) * length(pre) / (length(pre) - 1)
+  post_sample_var <-  var(post) * length(post) / (length(post) - 1)
+
+  # pre post samples are no longer independent to each other, need to account for the covariance term
+  pre_post_se <- sqrt(pre_sample_var / length(pre) + post_sample_var / length(post) - 2 * pre_sample_var / length(pre))
+  
+  z_score <- pre_post_mean / pre_post_se
+  if((z_score >= 1.96) | (z_score <= -1.96)){
+    sig_sim <-  sig_sim + 1
+  }
+}
+print(paste0("Power is: ", sig_sim / sim))
+
+
+# Linear regression (Linear regression assumes each samples are independent to each other, so I think the result should be similar to the one without correcting for the pre-post covariance) (Wrong way)
+sig_sim <- 0  
+for (i in 1:sim){
+  pre <- rpois(samples_per_cohort, 10)
+  post <- pre + rnorm(samples_per_cohort, mean=0.01, sd=1)
+  # our treatment covariates
+  cohorts <- c(rep(0, samples_per_cohort), rep(1, samples_per_cohort))
+  Y <- c(pre, post)
+  linear_model <- lm(Y ~ cohorts)
+  # Extract the p value associated with the cohorts (pre-post)
+  if (summary(linear_model)$coefficients[2,4] <= 0.05){
+    sig_sim <-  sig_sim + 1
+  }
+}
+print(paste0("Power is: ", sig_sim / sim))
+
+```
+
+So in summary, if we don't account for the data points covariance between each samples, then we will underestimate the type one error, as well as underestimate the power of the test
+
