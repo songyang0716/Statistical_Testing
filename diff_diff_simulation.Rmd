@@ -23,7 +23,8 @@ knitr::opts_chunk$set(echo = TRUE)
 # Without correcting for covariance of pre-post data points of each sample (Wrong way)
 sig_sim <- 0 
 sim <- 10000
-samples_per_cohort <- 10000
+samples_per_cohort <- 5000
+
 set.seed(888)
 for (i in 1:sim){
   pre <- rpois(samples_per_cohort, 10)
@@ -54,7 +55,7 @@ for (i in 1:sim){
   post_sample_var <-  var(post) * length(post) / (length(post) - 1)
 
   # pre post samples are no longer independent to each other, need to account for the covariance term
-  pre_post_se <- sqrt(pre_sample_var / length(pre) + post_sample_var / length(post) - 2 * pre_sample_var / length(pre))
+  pre_post_se <- sqrt(pre_sample_var / length(pre) + post_sample_var / length(post) - 2 * cov(pre, post) / length(pre))
   
   z_score <- pre_post_mean / pre_post_se
   if((z_score >= 1.96) | (z_score <= -1.96)){
@@ -81,7 +82,25 @@ for (i in 1:sim){
 }
 print(paste0("Type one error is: ", sig_sim / sim))
 
+
+
 # Take diff first, and then check for the differences distribution 
+sig_sim <- 0 
+set.seed(888)
+for (i in 1:sim){
+  pre <- rpois(samples_per_cohort, 10)
+  post <- pre + rnorm(samples_per_cohort, mean=0, sd=1)
+  pre_post_diff_mean <- mean(post - pre)
+  pre_post_diff_var <- var(post -pre) * length(post - pre) / (length(post - pre) - 1)
+  # pre post samples are no longer independent to each other, need to account for the covariance term
+  pre_post_diff_se <- sqrt(pre_post_diff_var / length(post - pre))
+  z_score <- pre_post_diff_mean / pre_post_diff_se
+  if((z_score >= 1.96) | (z_score <= -1.96)){
+    sig_sim <-  sig_sim + 1
+  }
+}
+print(paste0("Type one error is: ", sig_sim / sim))
+
 
 ```
 
@@ -93,7 +112,7 @@ print(paste0("Type one error is: ", sig_sim / sim))
 # Without correcting for covariance of pre-post data points of each sample (Wrong way)
 sig_sim <- 0 
 sim <- 10000
-samples_per_cohort <- 10000
+samples_per_cohort <- 5000
 set.seed(888)
 for (i in 1:sim){
   pre <- rpois(samples_per_cohort, 10)
@@ -124,7 +143,7 @@ for (i in 1:sim){
   post_sample_var <-  var(post) * length(post) / (length(post) - 1)
 
   # pre post samples are no longer independent to each other, need to account for the covariance term
-  pre_post_se <- sqrt(pre_sample_var / length(pre) + post_sample_var / length(post) - 2 * pre_sample_var / length(pre))
+  pre_post_se <- sqrt(pre_sample_var / length(pre) + post_sample_var / length(post) - 2 * cov(pre, post) / length(pre))
   
   z_score <- pre_post_mean / pre_post_se
   if((z_score >= 1.96) | (z_score <= -1.96)){
@@ -151,10 +170,192 @@ for (i in 1:sim){
 }
 print(paste0("Power is: ", sig_sim / sim))
 
+
 # Take diff first, and then check for the differences distribution 
+sig_sim <- 0 
+set.seed(888)
+for (i in 1:sim){
+  pre <- rpois(samples_per_cohort, 10)
+  post <- pre + rnorm(samples_per_cohort, mean=0.08, sd=1)
+  pre_post_diff_mean <- mean(post - pre)
+  pre_post_diff_var <- var(post -pre) * length(post - pre) / (length(post - pre) - 1)
+  # pre post samples are no longer independent to each other, need to account for the covariance term
+  pre_post_diff_se <- sqrt(pre_post_diff_var / length(post - pre))
+  z_score <- pre_post_diff_mean / pre_post_diff_se
+  if((z_score >= 1.96) | (z_score <= -1.96)){
+    sig_sim <-  sig_sim + 1
+  }
+}
+print(paste0("Power is: ", sig_sim / sim))
 
 
 ```
 
-So in summary, if we don't account for the data points covariance between each samples, then we will underestimate the type one error, as well as underestimate the power of the test
+In summary, if we don't account for the data points covariance between each samples, then we will underestimate the type one error, as well as underestimate the power of the test
+
+
+
+
+# Two groups, pre-post test
+## Type one error / False Positive Test
+```{r, message=FALSE, warning=FALSE}
+# When there is no treatment effect
+# Without correcting for covariance of pre-post data points of each sample (Wrong way)
+sig_sim <- 0 
+sim <- 10000
+samples_per_cohort <- 5000
+
+seasonal_effects <- 3
+treatment_effects <- 0
+
+control_mean <- 10
+treatment_mean <- 10
+
+
+set.seed(888)
+for (i in 1:sim){
+  pre_control <- rpois(samples_per_cohort, control_mean)
+  post_control <- pre_control + rnorm(samples_per_cohort, mean=seasonal_effects, sd=1)
+  pre_post_control_mean <- mean(post_control) - mean(pre_control)
+  pre_control_var <-  var(pre_control) * length(pre_control) / (length(pre_control) - 1)
+  post_control_var <-  var(post_control) * length(post_control) / (length(post_control) - 1)
+
+  pre_treatment <- rpois(samples_per_cohort, treatment_mean)
+  post_treatment  <- pre_treatment + rnorm(samples_per_cohort, mean=seasonal_effects+treatment_effects, sd=1)
+  
+  pre_post_treatment_mean <- mean(post_treatment) - mean(pre_treatment)
+  pre_treatment_var <-  var(pre_treatment) * length(pre_treatment) / (length(pre_treatment) - 1)
+  post_treatment_var <-  var(post_treatment) * length(post_treatment) / (length(post_treatment) - 1)
+  
+  # pre post samples are no longer independent to each other, need to account for the covariance term
+  pre_post_control_var <- pre_control_var / length(pre_control) + post_control_var / length(post_control)
+  pre_post_treatment_var <- pre_treatment_var / length(pre_treatment) + post_treatment_var / length(post_treatment)
+  
+  diff_diff_se <- sqrt(pre_post_control_var + pre_post_treatment_var)
+  
+  z_score <- (pre_post_treatment_mean -  pre_post_control_mean ) / diff_diff_se
+  if((z_score >= 1.96) | (z_score <= -1.96)){
+    sig_sim <-  sig_sim + 1
+  }
+}
+print(paste0("Type one error is: ", sig_sim / sim))
+
+
+
+
+
+# Correct for covariance of pre-post data points of each sample (Correct way)
+sig_sim <- 0 
+set.seed(888)
+for (i in 1:sim){
+  pre_control <- rpois(samples_per_cohort, control_mean)
+  post_control <- pre_control + rnorm(samples_per_cohort, mean=seasonal_effects, sd=1)
+  pre_post_control_mean <- mean(post_control) - mean(pre_control)
+  pre_control_var <-  var(pre_control) * length(pre_control) / (length(pre_control) - 1)
+  post_control_var <-  var(post_control) * length(post_control) / (length(post_control) - 1)
+
+  pre_treatment <- rpois(samples_per_cohort, treatment_mean)
+  post_treatment  <- pre_treatment + rnorm(samples_per_cohort, mean=seasonal_effects+treatment_effects, sd=1)
+  
+  pre_post_treatment_mean <- mean(post_treatment) - mean(pre_treatment)
+  pre_treatment_var <-  var(pre_treatment) * length(pre_treatment) / (length(pre_treatment) - 1)
+  post_treatment_var <-  var(post_treatment) * length(post_treatment) / (length(post_treatment) - 1)
+  
+  # pre post samples are no longer independent to each other, need to account for the covariance term
+  pre_post_control_var <- pre_control_var / length(pre_control) + post_control_var / length(post_control) - 2 * cov(pre_control, post_control) / length(pre_control)
+  
+  pre_post_treatment_var <- pre_treatment_var / length(pre_treatment) + post_treatment_var / length(post_treatment) - 2 * cov(pre_treatment, post_treatment) / length(pre_treatment)
+  
+  diff_diff_se <- sqrt(pre_post_control_var + pre_post_treatment_var)
+  
+  z_score <- (pre_post_treatment_mean -  pre_post_control_mean ) / diff_diff_se
+  if((z_score >= 1.96) | (z_score <= -1.96)){
+    sig_sim <-  sig_sim + 1
+  }
+}
+print(paste0("Type one error is: ", sig_sim / sim))
+
+
+
+```
+
+
+## Power Test
+```{r, message=FALSE, warning=FALSE}
+sig_sim <- 0 
+sim <- 10000
+samples_per_cohort <- 5000
+
+# the seasonal_effects won't affect our test result
+seasonal_effects <- 5
+treatment_effects <- 0.08
+
+control_mean <- 10
+treatment_mean <- 10
+
+set.seed(888)
+for (i in 1:sim){
+  pre_control <- rpois(samples_per_cohort, control_mean)
+  post_control <- pre_control + rnorm(samples_per_cohort, mean=seasonal_effects, sd=1)
+  pre_post_control_mean <- mean(post_control) - mean(pre_control)
+  pre_control_var <-  var(pre_control) * length(pre_control) / (length(pre_control) - 1)
+  post_control_var <-  var(post_control) * length(post_control) / (length(post_control) - 1)
+
+  pre_treatment <- rpois(samples_per_cohort, treatment_mean)
+  post_treatment  <- pre_treatment + rnorm(samples_per_cohort, mean=seasonal_effects + treatment_effects, sd=1)
+  
+  pre_post_treatment_mean <- mean(post_treatment) - mean(pre_treatment)
+  pre_treatment_var <-  var(pre_treatment) * length(pre_treatment) / (length(pre_treatment) - 1)
+  post_treatment_var <-  var(post_treatment) * length(post_treatment) / (length(post_treatment) - 1)
+  
+  # pre post samples are no longer independent to each other, need to account for the covariance term
+  pre_post_control_var <- pre_control_var / length(pre_control) + post_control_var / length(post_control)
+  pre_post_treatment_var <- pre_treatment_var / length(pre_treatment) + post_treatment_var / length(post_treatment)
+  
+  diff_diff_se <- sqrt(pre_post_control_var + pre_post_treatment_var)
+  
+  z_score <- (pre_post_treatment_mean -  pre_post_control_mean ) / diff_diff_se
+  if((z_score >= 1.96) | (z_score <= -1.96)){
+    sig_sim <-  sig_sim + 1
+  }
+}
+print(paste0("Power is: ", sig_sim / sim))
+
+
+
+
+
+# Correct for covariance of pre-post data points of each sample (Correct way)
+sig_sim <- 0 
+set.seed(888)
+for (i in 1:sim){
+  pre_control <- rpois(samples_per_cohort, control_mean)
+  post_control <- pre_control + rnorm(samples_per_cohort, mean=seasonal_effects, sd=1)
+  pre_post_control_mean <- mean(post_control) - mean(pre_control)
+  pre_control_var <-  var(pre_control) * length(pre_control) / (length(pre_control) - 1)
+  post_control_var <-  var(post_control) * length(post_control) / (length(post_control) - 1)
+
+  pre_treatment <- rpois(samples_per_cohort, treatment_mean)
+  post_treatment  <- pre_treatment + rnorm(samples_per_cohort, mean=seasonal_effects+treatment_effects, sd=1)
+  
+  pre_post_treatment_mean <- mean(post_treatment) - mean(pre_treatment)
+  pre_treatment_var <-  var(pre_treatment) * length(pre_treatment) / (length(pre_treatment) - 1)
+  post_treatment_var <-  var(post_treatment) * length(post_treatment) / (length(post_treatment) - 1)
+  
+  # pre post samples are no longer independent to each other, need to account for the covariance term
+  pre_post_control_var <- pre_control_var / length(pre_control) + post_control_var / length(post_control) - 2 * cov(pre_control, post_control) / length(pre_control)
+  
+  pre_post_treatment_var <- pre_treatment_var / length(pre_treatment) + post_treatment_var / length(post_treatment) - 2 * cov(pre_treatment, post_treatment) / length(pre_treatment)
+  
+  diff_diff_se <- sqrt(pre_post_control_var + pre_post_treatment_var)
+  
+  z_score <- (pre_post_treatment_mean -  pre_post_control_mean ) / diff_diff_se
+  if((z_score >= 1.96) | (z_score <= -1.96)){
+    sig_sim <-  sig_sim + 1
+  }
+}
+print(paste0("Power is: ", sig_sim / sim))
+
+
+```
 
