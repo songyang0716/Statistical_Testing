@@ -4,24 +4,50 @@ author: "yangsong"
 date: "10/31/2019"
 output:
   html_document:
-    code_folding: hide
-    toc: true
+    #code_folding: hide
+    number_sections: yes
     theme: united
-    number_sections: true
+    toc: yes
+  pdf_document:
+    toc: yes
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# One Group Test
+# One group, pre-post test
+## Type one error / False Positive Test
 ```{r, message=FALSE, warning=FALSE}
-# one cohorts, two period (pre-post), no effects
-# We need to correct for covariance of pre-post a each sample
+# No effects in post period.  We assume there are two cohorts - pre and post and we want to check the significance of mean differences between two cohorts
+# Without correcting for covariance of pre-post data points of each sample
 sig_sim <- 0 
-for (i in 1:10000){
-  pre <- rpois(10000, 10)
-  post <- pre + rnorm(10000, mean=0, sd=1)
+sim <- 10000
+samples_per_cohort <- 10000
+for (i in 1:sim){
+  pre <- rpois(samples_per_cohort, 10)
+  post <- pre + rnorm(samples_per_cohort, mean=0, sd=1)
+  pre_post_mean <- mean(post) - mean(pre)
+  pre_sample_var <-  var(pre) * length(pre) / (length(pre) - 1)
+  post_sample_var <-  var(post) * length(post) / (length(post) - 1)
+
+  # pre post samples are no longer independent to each other, need to account for the covariance term
+  pre_post_se <- sqrt(pre_sample_var / length(pre) + post_sample_var / length(post))
+  
+  z_score <- pre_post_mean / pre_post_se
+  if((z_score >= 1.96) | (z_score <= -1.96)){
+    sig_sim <-  sig_sim + 1
+  }
+}
+print(paste0("Type one error is: ", sig_sim / sim))
+
+
+# No effects in post period
+# Correct for covariance of pre-post data points of each sample
+sig_sim <- 0 
+for (i in 1:sim){
+  pre <- rpois(samples_per_cohort, 10)
+  post <- pre + rnorm(samples_per_cohort, mean=0, sd=1)
   pre_post_mean <- mean(post) - mean(pre)
   pre_sample_var <-  var(pre) * length(pre) / (length(pre) - 1)
   post_sample_var <-  var(post) * length(post) / (length(post) - 1)
@@ -34,7 +60,24 @@ for (i in 1:10000){
     sig_sim <-  sig_sim + 1
   }
 }
-print(sig_sim)
+print(paste0("Type one error is: ", sig_sim / sim))
 
+
+# Linear regression (Linear regression assumes each samples are independent to each other, so I think the result should be similar to the one without correcting for the pre-post covariance)
+sig_sim <- 0 
+for (i in 1:sim){
+  pre <- rpois(samples_per_cohort, 10)
+  post <- pre + rnorm(samples_per_cohort, mean=0, sd=1)
+  # our treatment covariates
+  cohorts <- c(rep(0, samples_per_cohort), rep(1, samples_per_cohort))
+  Y <- c(pre, post)
+  linear_model <- lm(Y ~ cohorts)
+  # Extract the p value associated with the cohorts (pre-post)
+  if (summary(linear_model)$coefficients[2,4] <= 0.05){
+    sig_sim <-  sig_sim + 1
+  }
+  print(paste0("Type one error is: ", sig_sim / sim))
+}
 ```
 
+## Power Test
