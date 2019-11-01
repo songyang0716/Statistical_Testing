@@ -355,7 +355,5 @@ for (i in 1:sim){
   }
 }
 print(paste0("Power is: ", sig_sim / sim))
-
-
 ```
 
