@@ -97,7 +97,7 @@ samples_per_cohort <- 10000
 set.seed(888)
 for (i in 1:sim){
   pre <- rpois(samples_per_cohort, 10)
-  post <- pre + rnorm(samples_per_cohort, mean=0.05, sd=1)
+  post <- pre + rnorm(samples_per_cohort, mean=0.08, sd=1)
   pre_post_mean <- mean(post) - mean(pre)
   pre_sample_var <-  var(pre) * length(pre) / (length(pre) - 1)
   post_sample_var <-  var(post) * length(post) / (length(post) - 1)
@@ -118,7 +118,7 @@ sig_sim <- 0
 set.seed(888)
 for (i in 1:sim){
   pre <- rpois(samples_per_cohort, 10)
-  post <- pre + rnorm(samples_per_cohort, mean=0.05, sd=1)
+  post <- pre + rnorm(samples_per_cohort, mean=0.08, sd=1)
   pre_post_mean <- mean(post) - mean(pre)
   pre_sample_var <-  var(pre) * length(pre) / (length(pre) - 1)
   post_sample_var <-  var(post) * length(post) / (length(post) - 1)
@@ -139,12 +139,12 @@ sig_sim <- 0
 set.seed(888)
 for (i in 1:sim){
   pre <- rpois(samples_per_cohort, 10)
-  post <- pre + rnorm(samples_per_cohort, mean=0.05, sd=1)
+  post <- pre + rnorm(samples_per_cohort, mean=0.08, sd=1)
   # our treatment covariates
   cohorts <- c(rep(0, samples_per_cohort), rep(1, samples_per_cohort))
   Y <- c(pre, post)
   linear_model <- lm(Y ~ cohorts)
-  # Extract the p value associated with the cohorts (pre-post)
+  # Extract the p value associated with the cohorts (pre-post)s
   if (summary(linear_model)$coefficients[2,4] <= 0.05){
     sig_sim <-  sig_sim + 1
   }

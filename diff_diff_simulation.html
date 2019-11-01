@@ -209,6 +209,7 @@ $(document).ready(function () {
 sig_sim &lt;- 0 
 sim &lt;- 10000
 samples_per_cohort &lt;- 10000
+set.seed(888)
 for (i in 1:sim){
   pre &lt;- rpois(samples_per_cohort, 10)
   post &lt;- pre + rnorm(samples_per_cohort, mean=0, sd=1)
@@ -228,6 +229,7 @@ print(paste0(&quot;Type one error is: &quot;, sig_sim / sim))</code></pre>
 <pre><code>## [1] &quot;Type one error is: 0&quot;</code></pre>
 <pre class="r"><code># Correct for covariance of pre-post data points of each sample (Correct way)
 sig_sim &lt;- 0 
+set.seed(888)
 for (i in 1:sim){
   pre &lt;- rpois(samples_per_cohort, 10)
   post &lt;- pre + rnorm(samples_per_cohort, mean=0, sd=1)
@@ -244,9 +246,10 @@ for (i in 1:sim){
   }
 }
 print(paste0(&quot;Type one error is: &quot;, sig_sim / sim))</code></pre>
-<pre><code>## [1] &quot;Type one error is: 0.0513&quot;</code></pre>
+<pre><code>## [1] &quot;Type one error is: 0.0484&quot;</code></pre>
 <pre class="r"><code># Linear regression (Linear regression assumes each samples are independent to each other, so I think the result should be similar to the one without correcting for the pre-post covariance)  (Wrong way)
 sig_sim &lt;- 0 
+set.seed(888)
 for (i in 1:sim){
   pre &lt;- rpois(samples_per_cohort, 10)
   post &lt;- pre + rnorm(samples_per_cohort, mean=0, sd=1)
@@ -261,6 +264,7 @@ for (i in 1:sim){
 }
 print(paste0(&quot;Type one error is: &quot;, sig_sim / sim))</code></pre>
 <pre><code>## [1] &quot;Type one error is: 0&quot;</code></pre>
+<pre class="r"><code># Take diff first, and then check for the differences distribution </code></pre>
 </div>
 <div id="power-test" class="section level2">
 <h2><span class="header-section-number">1.2</span> Power Test</h2>
@@ -269,9 +273,10 @@ print(paste0(&quot;Type one error is: &quot;, sig_sim / sim))</code></pre>
 sig_sim &lt;- 0 
 sim &lt;- 10000
 samples_per_cohort &lt;- 10000
+set.seed(888)
 for (i in 1:sim){
   pre &lt;- rpois(samples_per_cohort, 10)
-  post &lt;- pre + rnorm(samples_per_cohort, mean=0.2, sd=1)
+  post &lt;- pre + rnorm(samples_per_cohort, mean=0.08, sd=1)
   pre_post_mean &lt;- mean(post) - mean(pre)
   pre_sample_var &lt;-  var(pre) * length(pre) / (length(pre) - 1)
   post_sample_var &lt;-  var(post) * length(post) / (length(post) - 1)
@@ -285,12 +290,13 @@ for (i in 1:sim){
   }
 }
 print(paste0(&quot;Power is: &quot;, sig_sim / sim))</code></pre>
-<pre><code>## [1] &quot;Power is: 1&quot;</code></pre>
+<pre><code>## [1] &quot;Power is: 0.1654&quot;</code></pre>
 <pre class="r"><code># Correct for covariance of pre-post data points of each sample (Correct way)
 sig_sim &lt;- 0 
+set.seed(888)
 for (i in 1:sim){
   pre &lt;- rpois(samples_per_cohort, 10)
-  post &lt;- pre + rnorm(samples_per_cohort, mean=0.2, sd=1)
+  post &lt;- pre + rnorm(samples_per_cohort, mean=0.08, sd=1)
   pre_post_mean &lt;- mean(post) - mean(pre)
   pre_sample_var &lt;-  var(pre) * length(pre) / (length(pre) - 1)
   post_sample_var &lt;-  var(post) * length(post) / (length(post) - 1)
@@ -307,20 +313,22 @@ print(paste0(&quot;Power is: &quot;, sig_sim / sim))</code></pre>
 <pre><code>## [1] &quot;Power is: 1&quot;</code></pre>
 <pre class="r"><code># Linear regression (Linear regression assumes each samples are independent to each other, so I think the result should be similar to the one without correcting for the pre-post covariance) (Wrong way)
 sig_sim &lt;- 0  
+set.seed(888)
 for (i in 1:sim){
   pre &lt;- rpois(samples_per_cohort, 10)
-  post &lt;- pre + rnorm(samples_per_cohort, mean=0.2, sd=1)
+  post &lt;- pre + rnorm(samples_per_cohort, mean=0.08, sd=1)
   # our treatment covariates
   cohorts &lt;- c(rep(0, samples_per_cohort), rep(1, samples_per_cohort))
   Y &lt;- c(pre, post)
   linear_model &lt;- lm(Y ~ cohorts)
-  # Extract the p value associated with the cohorts (pre-post)
+  # Extract the p value associated with the cohorts (pre-post)s
   if (summary(linear_model)$coefficients[2,4] &lt;= 0.05){
     sig_sim &lt;-  sig_sim + 1
   }
 }
 print(paste0(&quot;Power is: &quot;, sig_sim / sim))</code></pre>
-<pre><code>## [1] &quot;Power is: 1&quot;</code></pre>
+<pre><code>## [1] &quot;Power is: 0.1655&quot;</code></pre>
+<pre class="r"><code># Take diff first, and then check for the differences distribution </code></pre>
 <p>So in summary, if we don’t account for the data points covariance between each samples, then we will underestimate the type one error, as well as underestimate the power of the test</p>
 </div>
 </div>
