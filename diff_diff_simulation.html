@@ -383,7 +383,7 @@ seasonal_effects &lt;- 3
 treatment_effects &lt;- 0
 
 control_mean &lt;- 10
-treatment_mean &lt;- 10
+treatment_mean &lt;- 15
 
 
 set.seed(888)
@@ -444,7 +444,7 @@ for (i in 1:sim){
   }
 }
 print(paste0(&quot;Type one error is: &quot;, sig_sim / sim))</code></pre>
-<pre><code>## [1] &quot;Type one error is: 0.0489&quot;</code></pre>
+<pre><code>## [1] &quot;Type one error is: 0.0491&quot;</code></pre>
 </div>
 <div id="power-test-1" class="section level2">
 <h2><span class="header-section-number">2.2</span> Power Test</h2>
@@ -452,11 +452,12 @@ print(paste0(&quot;Type one error is: &quot;, sig_sim / sim))</code></pre>
 sim &lt;- 10000
 samples_per_cohort &lt;- 5000
 
-seasonal_effects &lt;- 5
+# the seasonal_effects won't affect our test result
+seasonal_effects &lt;- 3
 treatment_effects &lt;- 0.08
 
 control_mean &lt;- 10
-treatment_mean &lt;- 10
+treatment_mean &lt;- 15
 
 set.seed(888)
 for (i in 1:sim){
@@ -516,7 +517,7 @@ for (i in 1:sim){
   }
 }
 print(paste0(&quot;Power is: &quot;, sig_sim / sim))</code></pre>
-<pre><code>## [1] &quot;Power is: 0.978&quot;</code></pre>
+<pre><code>## [1] &quot;Power is: 0.9793&quot;</code></pre>
 </div>
 </div>
 

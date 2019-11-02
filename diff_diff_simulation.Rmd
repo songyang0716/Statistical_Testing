@@ -209,7 +209,7 @@ seasonal_effects <- 3
 treatment_effects <- 0
 
 control_mean <- 10
-treatment_mean <- 10
+treatment_mean <- 15
 
 
 set.seed(888)
@@ -276,6 +276,8 @@ for (i in 1:sim){
 print(paste0("Type one error is: ", sig_sim / sim))
 
 
+# Linear regression
+
 
 ```
 
@@ -287,11 +289,11 @@ sim <- 10000
 samples_per_cohort <- 5000
 
 # the seasonal_effects won't affect our test result
-seasonal_effects <- 5
+seasonal_effects <- 3
 treatment_effects <- 0.08
 
 control_mean <- 10
-treatment_mean <- 10
+treatment_mean <- 15
 
 set.seed(888)
 for (i in 1:sim){
@@ -355,5 +357,9 @@ for (i in 1:sim){
   }
 }
 print(paste0("Power is: ", sig_sim / sim))
+
+
+
+# Linear regression
 ```
 
