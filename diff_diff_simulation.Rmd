@@ -277,7 +277,29 @@ print(paste0("Type one error is: ", sig_sim / sim))
 
 
 # Linear regression
+sig_sim <- 0 
+set.seed(888)
 
+for (i in 1:sim){
+  pre_control <- rpois(samples_per_cohort, control_mean)
+  post_control <- pre_control + rnorm(samples_per_cohort, mean=seasonal_effects, sd=1)
+  
+  pre_treatment <- rpois(samples_per_cohort, treatment_mean)
+  post_treatment  <- pre_treatment + rnorm(samples_per_cohort, mean=seasonal_effects+treatment_effects, sd=1)
+
+  Y = c(pre_control, pre_treatment, post_control, post_treatment)
+  
+  time = c(rep(0, length(pre_control) + length(pre_treatment)), rep(1, length(post_control) + length(post_treatment)))
+  
+  cohort = c(rep(0, length(pre_control)), rep(1, length(pre_treatment)), rep(0, length(post_control)), rep(1, length(post_treatment)))
+
+  linear_model <- lm(Y ~ time*cohort)  
+
+  if (summary(linear_model)$coefficients[4,4] <= 0.05){
+    sig_sim <-  sig_sim + 1
+  }
+}
+print(paste0("Type one error is: ", sig_sim / sim))
 
 ```
 
@@ -290,7 +312,7 @@ samples_per_cohort <- 5000
 
 # the seasonal_effects won't affect our test result
 seasonal_effects <- 3
-treatment_effects <- 0.08
+treatment_effects <- 0.2
 
 control_mean <- 10
 treatment_mean <- 15
@@ -360,6 +382,32 @@ print(paste0("Power is: ", sig_sim / sim))
 
 
 
+
 # Linear regression
+sig_sim <- 0 
+set.seed(888)
+
+for (i in 1:sim){
+  pre_control <- rpois(samples_per_cohort, control_mean)
+  post_control <- pre_control + rnorm(samples_per_cohort, mean=seasonal_effects, sd=1)
+  
+  pre_treatment <- rpois(samples_per_cohort, treatment_mean)
+  post_treatment  <- pre_treatment + rnorm(samples_per_cohort, mean=seasonal_effects+treatment_effects, sd=1)
+
+  Y = c(pre_control, pre_treatment, post_control, post_treatment)
+  
+  time = c(rep(0, length(pre_control) + length(pre_treatment)), rep(1, length(post_control) + length(post_treatment)))
+  
+  cohort = c(rep(0, length(pre_control)), rep(1, length(pre_treatment)), rep(0, length(post_control)), rep(1, length(post_treatment)))
+
+  linear_model <- lm(Y ~ time*cohort)  
+
+  if (summary(linear_model)$coefficients[4,4] <= 0.05){
+    sig_sim <-  sig_sim + 1
+  }
+}
+print(paste0("Power is: ", sig_sim / sim))
+
+
 ```
 
