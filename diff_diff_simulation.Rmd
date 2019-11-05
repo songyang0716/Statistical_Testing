@@ -446,8 +446,12 @@ print(paste0("Power is: ", sig_sim / sim))
 
 Similar to the one group result, if we don't account for the data points covariance within each sample, then we will underestimate the type one error, as well as underestimate the power of the test. The diff-in-diff linear regression has the same issue as the incorrect t-test, which underestimate the standard error of the treatment effects (some scholars have done some research on this,  https://economics.mit.edu/files/750)
 
+## Use GEE model to solve this problem
+```{r, message=FALSE, warning=FALSE}
 
-## Use rANOVA to solve this problem
+```
+
+## Use mix effects model to solve this problem
 ```{r, message=FALSE, warning=FALSE}
 
 ```
