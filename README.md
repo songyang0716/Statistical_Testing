@@ -6,4 +6,7 @@
 - Two groups pre-post test<br/>
 
 2. How to do the correct analysis for longitdinal dataset ?
+- Paired T-Test for Two Time Points
+- GEE Model
+- Mixed Effects Model
 
