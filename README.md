@@ -1,6 +1,6 @@
-### Some statistical testing methods that could be used in online experimentation ###
+# Some statistical testing methods that could be used in online experimentation #
 
-#### Repeated Measurement Experiments ####
+### Repeated Measurement Experiments ###
  
 0. Advantage of Repeated Measurement:
 - Repeated measurement from a single subject provide more information than a single measurement obtained from a single subject, which improves the power of our study
@@ -15,4 +15,7 @@
 - Paired T-Test for Two Time Points
 - GEE Model
 - Mixed Effects Model
+
+
+# Delta Method #
 
