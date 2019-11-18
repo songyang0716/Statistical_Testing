@@ -449,7 +449,7 @@ Similar to the one group result, if we don't account for the data points covaria
 ## Use GEE model to solve this problem
 ```{r, message=FALSE, warning=FALSE}
 
-```
+``` ""
 
 ## Use mix effects model to solve this problem
 ```{r, message=FALSE, warning=FALSE}
