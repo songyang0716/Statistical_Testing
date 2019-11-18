@@ -13,9 +13,9 @@
 
 2. How to do the correct analysis for longitudinal dataset ?
 - Paired T-Test for Two Time Points
-   -- Good results
+   -- Solve the issue
 - GEE Model 
-   -- It doesn't solve the pre-post test problem, from the simulation result
+   -- It doesn't solve the issue, from the simulation result, we have seen ~ 0% type one error and low power
 - Mixed Effects Model
 
 
