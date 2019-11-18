@@ -319,43 +319,41 @@ treatment_mean <- 15
 
 set.seed(888)
 for (i in 1:sim) {
-pre_control <- rpois(samples_per_cohort, control_mean)
-post_control <-
-pre_control + rnorm(samples_per_cohort, mean = seasonal_effects, sd = 1)
-pre_post_control_mean <- mean(post_control) - mean(pre_control)
-pre_control_var <-
-var(pre_control) * length(pre_control) / (length(pre_control) - 1)
-post_control_var <-
-var(post_control) * length(post_control) / (length(post_control) - 1)
+  pre_control <- rpois(samples_per_cohort, control_mean)
+  post_control <-
+    pre_control + rnorm(samples_per_cohort, mean = seasonal_effects, sd = 1)
+  pre_post_control_mean <- mean(post_control) - mean(pre_control)
+  pre_control_var <-
+    var(pre_control) * length(pre_control) / (length(pre_control) - 1)
+  post_control_var <-
+    var(post_control) * length(post_control) / (length(post_control) - 1)
+  
+  pre_treatment <- rpois(samples_per_cohort, treatment_mean)
+  post_treatment <- pre_treatment + rnorm(samples_per_cohort, mean = seasonal_effects + treatment_effects, sd = 1)
 
-pre_treatment <- rpois(samples_per_cohort, treatment_mean)
-post_treatment  <-
-pre_treatment + rnorm(samples_per_cohort,
-mean = seasonal_effects + treatment_effects,
-sd = 1)
-
-pre_post_treatment_mean <-
-mean(post_treatment) - mean(pre_treatment)
-pre_treatment_var <-
-var(pre_treatment) * length(pre_treatment) / (length(pre_treatment) - 1)
-post_treatment_var <-
-var(post_treatment) * length(post_treatment) / (length(post_treatment) - 1)
+  pre_post_treatment_mean <-
+    mean(post_treatment) - mean(pre_treatment)
+  pre_treatment_var <-
+    var(pre_treatment) * length(pre_treatment) / (length(pre_treatment) - 1)
+  post_treatment_var <-
+    var(post_treatment) * length(post_treatment) / (length(post_treatment) - 1)
 
 # pre post samples are no longer independent to each other, need to account for the covariance term
-pre_post_control_var <-
-pre_control_var / length(pre_constrol) + post_control_var / length(post_control)
-pre_post_treatment_var <-
-pre_treatment_var / length(pre_treatment) + post_treatment_var / length(post_treatment)
+  pre_post_control_var <-
+    pre_control_var / length(pre_control) + post_control_var / length(post_control)
+  pre_post_treatment_var <-
+    pre_treatment_var / length(pre_treatment) + post_treatment_var / length(post_treatment)
 
-diff_diff_se <-
-sqrt(pre_post_control_var + pre_post_treatment_var)
+  diff_diff_se <-
+    sqrt(pre_post_control_var + pre_post_treatment_var)
 
-z_score <-
-(pre_post_treatment_mean -  pre_post_control_mean) / diff_diff_se
-if ((z_score >= 1.96) | (z_score <= -1.96)) {
-sig_sim <-  sig_sim + 1
-}
-}
+  z_score <-
+    (pre_post_treatment_mean -  pre_post_control_mean) / diff_diff_se
+      if ((z_score >= 1.96) | (z_score <= -1.96)) {
+        sig_sim <-  sig_sim + 1
+      }
+  }
+
 print(paste0("Power is: ", sig_sim / sim))
 
 
@@ -445,15 +443,5 @@ print(paste0("Power is: ", sig_sim / sim))
 
 
 Similar to the one group result, if we don't account for the data points covariance within each sample, then we will underestimate the type one error, as well as underestimate the power of the test. The diff-in-diff linear regression has the same issue as the incorrect t-test, which underestimate the standard error of the treatment effects (some scholars have done some research on this,  https://economics.mit.edu/files/750)
-
-## Use GEE model to solve this problem
-```{r, message=FALSE, warning=FALSE}
-
-``` ""
-
-## Use mix effects model to solve this problem
-```{r, message=FALSE, warning=FALSE}
-
-```
-
+s
 
