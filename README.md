@@ -20,5 +20,7 @@
 - Mixed Effects Model
 
 
-# Delta Method #
+### Delta Method ###
+
+### How to handle spillover effects? ###
 
