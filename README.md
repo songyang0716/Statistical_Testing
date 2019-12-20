@@ -15,7 +15,7 @@
 - Repeated Measurement ANOVA - compound symmetry assumption possibly works for two data points scenarior, but not valid for more generalized repeated measurement 
 - Paired T-Test for Two Time Points
    -- Solve the issue
-- GEE Model 
+- GEE Model - gee_simulation.Rmd
    -- It doesn't solve the issue, from the simulation result, we have seen ~ 0% type one error and low power
 - Mixed Effects Model
 
