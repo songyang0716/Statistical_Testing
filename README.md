@@ -23,8 +23,6 @@
 ### Cluster Randomized Experiment ###
 1. The difference-in-means estimator is no longer unbiased
 
-### Delta Method ###
 
-
-### How to handle spillover effects? ###
+### Network Effects ###
 
