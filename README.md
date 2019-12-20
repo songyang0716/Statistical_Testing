@@ -20,6 +20,8 @@
 - Mixed Effects Model
 
 
+### Cluster Randomized Experiment ###
+1. The difference-in-means estimator is no longer unbiased
 
 ### Delta Method ###
 
