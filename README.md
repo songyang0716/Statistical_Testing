@@ -21,7 +21,12 @@
 
 
 ### Cluster Randomized Experiment ###
-1. The difference-in-means estimator is no longer unbiased
+1. Why do we use clustrer randomized experiment ?
+- Sometimes, the unit randomization is infeasible or undesirable, the outcome measures are only available at the level of the cluster, or when unit interference with each other (Network Effects / Spillover Effects)
+
+2. Issues/challenges with cluster randomized experiment
+- The regular difference-in-means estimator is no longer unbiased (Mean of all samples in the treament cohort - mean of all samples in control cohort)
+
 
 
 ### Network Effects ###
