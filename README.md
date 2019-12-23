@@ -27,7 +27,7 @@
 2. Issues/challenges with cluster randomized experiment
 - The regular difference-in-means estimator is no longer unbiased (Mean of all samples in the treament cohort - mean of all samples in control cohort)
 
-3. Important papers on this topic
+3. List of paper on this topic that I have read
 - Unbiased Estimation of the Average Treatment Effect in Cluster-Randomized Experiments 
   This paper explains why the regular difference-in-means estimator is biased, and it introduces an unbiased estimator for the average treatment effect of cluster randomized experiment
   
