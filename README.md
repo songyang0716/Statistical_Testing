@@ -29,7 +29,7 @@
 
 3. List of paper on this topic that I have read
 - Unbiased Estimation of the Average Treatment Effect in Cluster-Randomized Experiments 
-  This paper explains why the regular difference-in-means estimator is biased, and it introduces an unbiased estimator for the average treatment effect of cluster randomized experiment
+-- This paper explains why the regular difference-in-means estimator is biased, and it introduces an unbiased estimator for the average treatment effect of cluster randomized experiment
   
 - Network A/B Testing: From Sampling to Estimation
 - 
