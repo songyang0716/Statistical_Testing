@@ -1,0 +1,30 @@
+---
+title: "cluster_difference_in_means_estimator"
+author: "yangsong"
+date: "12/28/2019"
+output:
+  html_document:
+    #code_folding: hide
+    number_sections: yes
+    theme: united
+    toc: yes
+  pdf_document:
+    toc: yes
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+### Generate dataset
+set.seed(88)
+
+M <- 10
+mc <- 5
+mt <- 5
+average_samples_in_each_cluster <- 100
+samples_per_cluster <- rpois(M, 100)
+mean_per_cluster <- rnorm(M, mean=100+samples_per_cluster*0.1, sd=10)
+
+
+
