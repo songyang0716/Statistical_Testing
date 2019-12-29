@@ -20,7 +20,7 @@
 - Mixed Effects Model
 
 
-### Cluster Randomized Experiment ### (cluster_difference_in_means_simulation)
+### Cluster Randomized Experiment (cluster_difference_in_means_simulation.Rmd)
 1. Why do we use clustrer randomized experiment ?
 - Sometimes, the unit randomization is infeasible or undesirable, the outcome measures are only available at the level of the cluster, or when unit interference with each other (Network Effects / Spillover Effects)
 
