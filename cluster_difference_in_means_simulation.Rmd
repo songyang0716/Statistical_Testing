@@ -30,22 +30,33 @@ individual_samples <-
   lapply(1:M, 
          function(x) rnorm(n=samples_per_cluster[x], mean = mean_per_cluster[x], sd=3))
 
-yt_yc_diff <- c()
 sim <- 100
 
 
 ### Difference in Means Estimator
+set.seed(8)
+yt_yc_diff <- c()
 for(i in 1:sim){
-  control_cohort <- sample(1:M, mc, replace=FALSE)
-  treatment_cohort <- sample(1:M, mt, replace=FALSE)
-  control_cohort_mean <- mean(unlist(individual_samples[control_cohort]))
-  treatment_cohort_mean <- mean(unlist(individual_samples[treatment_cohort]))
-  yt_yc_diff <- c(yt_yc_diff, treatment_cohort_mean - control_cohort_mean)
+     control_cohort <- sample(1:M, mc, replace=FALSE)
+     treatment_cohort <- sample(1:M, mt, replace=FALSE)
+     control_cohort_mean <- mean(unlist(individual_samples[control_cohort]))
+     treatment_cohort_mean <- mean(unlist(individual_samples[treatment_cohort]))
+     yt_yc_diff <- c(yt_yc_diff, treatment_cohort_mean - control_cohort_mean)
 }
 
 mean(yt_yc_diff)
 
 
 ### Horvitz-Thompson Estimator
+set.seed(8)
+yt_yc_diff <- c()
+for(i in 1:sim){
+  control_cohort <- sample(1:M, mc, replace=FALSE)
+  treatment_cohort <- sample(1:M, mt, replace=FALSE)
+  control_cohort_mean <- sum(unlist(individual_samples[control_cohort])) / mc
+  treatment_cohort_mean <- sum(unlist(individual_samples[treatment_cohort])) / mt
+  yt_yc_diff <- c(yt_yc_diff, (treatment_cohort_mean - control_cohort_mean) * M / sum(samples_per_cluster))
+}
 
+mean(yt_yc_diff)
 
