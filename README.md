@@ -20,12 +20,14 @@
 - Mixed Effects Model
 
 
-### Cluster Randomized Experiment ###
+### Cluster Randomized Experiment ### (cluster_difference_in_means_simulation)
 1. Why do we use clustrer randomized experiment ?
 - Sometimes, the unit randomization is infeasible or undesirable, the outcome measures are only available at the level of the cluster, or when unit interference with each other (Network Effects / Spillover Effects)
 
-2. Issues/challenges with cluster randomized experiment
+2. Issues/challenges with cluster randomized experiment (All the examples are included in the R file)
 - The regular difference-in-means estimator is no longer unbiased (Mean of all samples in the treament cohort - mean of all samples in control cohort)
+- Horvitz-Thompson estimator is unbiased, but suffers from high variance & non-invariance
+- Des Raj difference estimator
 
 3. List of paper on this topic that I have read
 - Unbiased Estimation of the Average Treatment Effect in Cluster-Randomized Experiments 
