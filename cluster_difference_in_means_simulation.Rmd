@@ -16,16 +16,20 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-### Generate dataset
+# Dataset
+```{r}
 set.seed(88)
-
+# Number of clusters
 M <- 100
+# Number of clusters randomly assigned to the control cohort
 mc <- 95
+# Number of clusters randomly assigned to the treatment cohort
 mt <- 5
+# Number of samples in each cluster
 average_samples_in_each_cluster <- 100
-# samples_per_cluster <- rpois(M, 100) + rpois(M, 100) + rpois(M, 100)
 samples_per_cluster <- sample(10:1000, M, replace=FALSE)
-mean_per_cluster <- rnorm(M, mean=100+samples_per_cluster*1, sd=10)
+# We intentionally make cluster's mean to be correlated with the number of samples in the clusters
+mean_per_cluster <- rnorm(M, mean=100+samples_per_cluster * 0.1, sd=10)
 
 individual_samples <-
   lapply(1:M, 
@@ -33,8 +37,12 @@ individual_samples <-
 
 sim <- 10000
 
+```
 
-### Difference in Means Estimator
+
+
+# Difference in Means Estimator
+```{r}
 set.seed(8)
 yt_yc_diff <- c()
 for(i in 1:sim){
@@ -44,11 +52,13 @@ for(i in 1:sim){
      treatment_cohort_mean <- mean(unlist(individual_samples[treatment_cohort]))
      yt_yc_diff <- c(yt_yc_diff, treatment_cohort_mean - control_cohort_mean)
 }
-
+ 
 mean(yt_yc_diff)
+```
 
 
-### Horvitz-Thompson Estimator
+# Horvitz-Thompson Estimator
+```{r}
 set.seed(8)
 yt_yc_diff <- c()
 for(i in 1:sim){
@@ -60,4 +70,12 @@ for(i in 1:sim){
 }
 
 mean(yt_yc_diff)
+```
+
+
+
+
+
+
+
 
