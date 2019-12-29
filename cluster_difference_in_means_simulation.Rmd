@@ -24,7 +24,28 @@ mc <- 5
 mt <- 5
 average_samples_in_each_cluster <- 100
 samples_per_cluster <- rpois(M, 100)
-mean_per_cluster <- rnorm(M, mean=100+samples_per_cluster*0.1, sd=10)
+mean_per_cluster <- rnorm(M, mean=100+samples_per_cluster*0.2, sd=10)
 
+individual_samples <-
+  lapply(1:M, 
+         function(x) rnorm(n=samples_per_cluster[x], mean = mean_per_cluster[x], sd=3))
+
+yt_yc_diff <- c()
+sim <- 100
+
+
+### Difference in Means Estimator
+for(i in 1:sim){
+  control_cohort <- sample(1:M, mc, replace=FALSE)
+  treatment_cohort <- sample(1:M, mt, replace=FALSE)
+  control_cohort_mean <- mean(unlist(individual_samples[control_cohort]))
+  treatment_cohort_mean <- mean(unlist(individual_samples[treatment_cohort]))
+  yt_yc_diff <- c(yt_yc_diff, treatment_cohort_mean - control_cohort_mean)
+}
+
+mean(yt_yc_diff)
+
+
+### Horvitz-Thompson Estimator
 
 
