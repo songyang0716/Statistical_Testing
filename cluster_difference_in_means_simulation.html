@@ -197,6 +197,7 @@ $(document).ready(function () {
 <li><a href="#dataset"><span class="toc-section-number">2</span> Dataset</a></li>
 <li><a href="#difference-in-means-estimator"><span class="toc-section-number">3</span> Difference in Means Estimator</a></li>
 <li><a href="#horvitz-thompson-estimator"><span class="toc-section-number">4</span> Horvitz-Thompson Estimator</a></li>
+<li><a href="#des-raj-difference-estimator"><span class="toc-section-number">5</span> Des Raj Difference Estimator</a></li>
 </ul>
 </div>
 
@@ -259,7 +260,35 @@ print(mean(yt_yc_diff))</code></pre>
 <pre><code>## [1] 0.6263372</code></pre>
 <pre class="r"><code>print(sd(yt_yc_diff))</code></pre>
 <pre><code>## [1] 51.04928</code></pre>
-<p>Horvitz-Thompson estimator seems to be a better estimator, more closer to zero. But the variance could be very large</p>
+<p>Horvitz-Thompson estimator seems to be a better estimator, more closer to zero. But the variance could be very large compared with the diff in means estimator</p>
+</div>
+<div id="des-raj-difference-estimator" class="section level1">
+<h1><span class="header-section-number">5</span> Des Raj Difference Estimator</h1>
+<pre class="r"><code>set.seed(8)
+yt_yc_diff &lt;- c()
+for(i in 1:sim){
+  control_cohort &lt;- sample(1:M, mc, replace=FALSE)
+  treatment_cohort &lt;- sample(1:M, mt, replace=FALSE)
+  y_t &lt;- unlist(lapply(individual_samples[treatment_cohort], function(x) sum(x)))
+  y_c &lt;- unlist(lapply(individual_samples[control_cohort], function(x) sum(x)))
+  x_t &lt;- samples_per_cluster[treatment_cohort]
+  x_c &lt;- samples_per_cluster[control_cohort]
+  
+  lm_control &lt;- lm(y_c ~ x_c)
+  lm_treatment &lt;- lm(y_t ~ x_t)
+  k_optimal &lt;-  lm_control$coefficients[[2]] * mc / M + lm_treatment$coefficients[[2]] * mt / M
+  
+  Y_c_total &lt;- (sum(unlist(individual_samples[control_cohort])) - (k_optimal * sum(x_c) - mc * k_optimal * (sum(samples_per_cluster)) / M)) * M / mc
+  Y_t_total &lt;- (sum(unlist(individual_samples[treatment_cohort])) - (k_optimal * sum(x_t) - mt * k_optimal * (sum(samples_per_cluster)) / M)) * M / mt
+  yt_yc_diff &lt;- c(yt_yc_diff, (Y_t_total - Y_c_total) / sum(samples_per_cluster))
+
+}
+
+print(mean(yt_yc_diff))</code></pre>
+<pre><code>## [1] -0.3045886</code></pre>
+<pre class="r"><code>print(sd(yt_yc_diff))</code></pre>
+<pre><code>## [1] 7.340939</code></pre>
+<p>Des Raj estimator is unbiased and with small variances.</p>
 </div>
 
 

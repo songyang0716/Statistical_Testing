@@ -79,6 +79,32 @@ print(sd(yt_yc_diff))
 Horvitz-Thompson estimator seems to be a better estimator, more closer to zero. But the variance could be very large compared with the diff in means estimator
 
 # Des Raj Difference Estimator
+```{r}
+set.seed(8)
+yt_yc_diff <- c()
+for(i in 1:sim){
+  control_cohort <- sample(1:M, mc, replace=FALSE)
+  treatment_cohort <- sample(1:M, mt, replace=FALSE)
+  y_t <- unlist(lapply(individual_samples[treatment_cohort], function(x) sum(x)))
+  y_c <- unlist(lapply(individual_samples[control_cohort], function(x) sum(x)))
+  x_t <- samples_per_cluster[treatment_cohort]
+  x_c <- samples_per_cluster[control_cohort]
+  
+  lm_control <- lm(y_c ~ x_c)
+  lm_treatment <- lm(y_t ~ x_t)
+  k_optimal <-  lm_control$coefficients[[2]] * mc / M + lm_treatment$coefficients[[2]] * mt / M
+  
+  Y_c_total <- (sum(unlist(individual_samples[control_cohort])) - (k_optimal * sum(x_c) - mc * k_optimal * (sum(samples_per_cluster)) / M)) * M / mc
+  Y_t_total <- (sum(unlist(individual_samples[treatment_cohort])) - (k_optimal * sum(x_t) - mt * k_optimal * (sum(samples_per_cluster)) / M)) * M / mt
+  yt_yc_diff <- c(yt_yc_diff, (Y_t_total - Y_c_total) / sum(samples_per_cluster))
+
+}
+
+print(mean(yt_yc_diff))
+print(sd(yt_yc_diff))
+```
+Des Raj estimator is unbiased and with small variances.
+
 
 
 
