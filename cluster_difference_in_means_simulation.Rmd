@@ -20,8 +20,8 @@ knitr::opts_chunk$set(echo = TRUE)
 set.seed(88)
 
 M <- 100
-mc <- 48
-mt <- 52
+mc <- 95
+mt <- 5
 average_samples_in_each_cluster <- 100
 # samples_per_cluster <- rpois(M, 100) + rpois(M, 100) + rpois(M, 100)
 samples_per_cluster <- sample(10:1000, M, replace=FALSE)
