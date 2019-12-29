@@ -193,14 +193,19 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#dataset"><span class="toc-section-number">1</span> Dataset</a></li>
-<li><a href="#difference-in-means-estimator"><span class="toc-section-number">2</span> Difference in Means Estimator</a></li>
-<li><a href="#horvitz-thompson-estimator"><span class="toc-section-number">3</span> Horvitz-Thompson Estimator</a></li>
+<li><a href="#source"><span class="toc-section-number">1</span> Source</a></li>
+<li><a href="#dataset"><span class="toc-section-number">2</span> Dataset</a></li>
+<li><a href="#difference-in-means-estimator"><span class="toc-section-number">3</span> Difference in Means Estimator</a></li>
+<li><a href="#horvitz-thompson-estimator"><span class="toc-section-number">4</span> Horvitz-Thompson Estimator</a></li>
 </ul>
 </div>
 
+<div id="source" class="section level1">
+<h1><span class="header-section-number">1</span> Source</h1>
+<p>The ideas are from the paper <strong>Unbiased Estimation of the Average Treatment Effect in Cluster-Randomized Experiments</strong> <a href="https://www.degruyter.com/view/j/spp.2015.6.issue-1-2/spp-2013-0002/spp-2013-0002.xml" class="uri">https://www.degruyter.com/view/j/spp.2015.6.issue-1-2/spp-2013-0002/spp-2013-0002.xml</a></p>
+</div>
 <div id="dataset" class="section level1">
-<h1><span class="header-section-number">1</span> Dataset</h1>
+<h1><span class="header-section-number">2</span> Dataset</h1>
 <pre class="r"><code>set.seed(88)
 # Number of clusters
 M &lt;- 100
@@ -221,7 +226,7 @@ individual_samples &lt;-
 sim &lt;- 10000</code></pre>
 </div>
 <div id="difference-in-means-estimator" class="section level1">
-<h1><span class="header-section-number">2</span> Difference in Means Estimator</h1>
+<h1><span class="header-section-number">3</span> Difference in Means Estimator</h1>
 <pre class="r"><code>set.seed(8)
 yt_yc_diff &lt;- c()
 for(i in 1:sim){
@@ -232,11 +237,14 @@ for(i in 1:sim){
      yt_yc_diff &lt;- c(yt_yc_diff, treatment_cohort_mean - control_cohort_mean)
 }
  
-mean(yt_yc_diff)</code></pre>
+print(mean(yt_yc_diff))</code></pre>
 <pre><code>## [1] -2.491558</code></pre>
+<pre class="r"><code>print(sd(yt_yc_diff))</code></pre>
+<pre><code>## [1] 12.757</code></pre>
+<p>The average treatment effect is far from zero, which is consistent with the paper conclusion</p>
 </div>
 <div id="horvitz-thompson-estimator" class="section level1">
-<h1><span class="header-section-number">3</span> Horvitz-Thompson Estimator</h1>
+<h1><span class="header-section-number">4</span> Horvitz-Thompson Estimator</h1>
 <pre class="r"><code>set.seed(8)
 yt_yc_diff &lt;- c()
 for(i in 1:sim){
@@ -247,8 +255,11 @@ for(i in 1:sim){
   yt_yc_diff &lt;- c(yt_yc_diff, (treatment_cohort_mean - control_cohort_mean) * M / sum(samples_per_cluster))
 }
 
-mean(yt_yc_diff)</code></pre>
+print(mean(yt_yc_diff))</code></pre>
 <pre><code>## [1] 0.6263372</code></pre>
+<pre class="r"><code>print(sd(yt_yc_diff))</code></pre>
+<pre><code>## [1] 51.04928</code></pre>
+<p>Horvitz-Thompson estimator seems to be a better estimator, more closer to zero. But the variance could be very large</p>
 </div>
 
 

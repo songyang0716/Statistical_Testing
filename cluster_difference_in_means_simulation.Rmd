@@ -16,6 +16,9 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+# Source
+The ideas are from the paper **Unbiased Estimation of the Average Treatment Effect in Cluster-Randomized Experiments** https://www.degruyter.com/view/j/spp.2015.6.issue-1-2/spp-2013-0002/spp-2013-0002.xml
+
 # Dataset
 ```{r}
 set.seed(88)
@@ -40,7 +43,6 @@ sim <- 10000
 ```
 
 
-
 # Difference in Means Estimator
 ```{r}
 set.seed(8)
@@ -53,8 +55,10 @@ for(i in 1:sim){
      yt_yc_diff <- c(yt_yc_diff, treatment_cohort_mean - control_cohort_mean)
 }
  
-mean(yt_yc_diff)
+print(mean(yt_yc_diff))
+print(sd(yt_yc_diff))
 ```
+The average treatment effect is far from zero, which is consistent with the paper conclusion
 
 
 # Horvitz-Thompson Estimator
@@ -69,9 +73,12 @@ for(i in 1:sim){
   yt_yc_diff <- c(yt_yc_diff, (treatment_cohort_mean - control_cohort_mean) * M / sum(samples_per_cluster))
 }
 
-mean(yt_yc_diff)
+print(mean(yt_yc_diff))
+print(sd(yt_yc_diff))
 ```
+Horvitz-Thompson estimator seems to be a better estimator, more closer to zero. But the variance could be very large compared with the diff in means estimator
 
+# Des Raj Difference Estimator
 
 
 
