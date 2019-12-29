@@ -19,18 +19,19 @@ knitr::opts_chunk$set(echo = TRUE)
 ### Generate dataset
 set.seed(88)
 
-M <- 10
-mc <- 5
-mt <- 5
+M <- 100
+mc <- 48
+mt <- 52
 average_samples_in_each_cluster <- 100
-samples_per_cluster <- rpois(M, 100)
-mean_per_cluster <- rnorm(M, mean=100+samples_per_cluster*0.2, sd=10)
+# samples_per_cluster <- rpois(M, 100) + rpois(M, 100) + rpois(M, 100)
+samples_per_cluster <- sample(10:1000, M, replace=FALSE)
+mean_per_cluster <- rnorm(M, mean=100+samples_per_cluster*1, sd=10)
 
 individual_samples <-
   lapply(1:M, 
          function(x) rnorm(n=samples_per_cluster[x], mean = mean_per_cluster[x], sd=3))
 
-sim <- 100
+sim <- 10000
 
 
 ### Difference in Means Estimator
