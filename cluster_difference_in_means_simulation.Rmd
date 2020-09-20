@@ -29,7 +29,6 @@ mc <- 95
 # Number of clusters randomly assigned to the treatment cohort
 mt <- 5
 # Number of samples in each cluster
-average_samples_in_each_cluster <- 100
 samples_per_cluster <- sample(10:1000, M, replace=FALSE)
 # We intentionally make cluster's mean to be correlated with the number of samples in the clusters
 mean_per_cluster <- rnorm(M, mean=100+samples_per_cluster * 0.1, sd=10)
@@ -103,7 +102,7 @@ for(i in 1:sim){
 print(mean(yt_yc_diff))
 print(sd(yt_yc_diff))
 ```
-Des Raj estimator is unbiased and with small variances.
+Des Raj estimator is unbiased and with small variances, which could be an idea candidate for cluster randomized experiment
 
 
 
